@@ -33,7 +33,7 @@ export default function Home() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       getData();
-    }, 5000);
+    }, 60000);
     return () => clearInterval(intervalId);
   });
 
