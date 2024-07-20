@@ -7,13 +7,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { red } from "@mui/material/colors";
+import { useState } from "react";
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
 
 export default function PricesTable({ prop }) {
-  console.log(prop);
+  const [stock, setStock] = useState();
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -63,6 +64,10 @@ export default function PricesTable({ prop }) {
                 component="th"
                 scope="row"
                 sx={{ bgcolor: "black", color: "red" }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setStock(row.name);
+                }}
               >
                 {row.name}
               </TableCell>

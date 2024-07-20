@@ -9,7 +9,10 @@ router.route("/").get(async (req, res) => {
   //call to the API to get the data, since its mock data so I am not actually making a call
   let refreshedPrices = await pricesData.updatedPrice();
 
-  console.log(refreshedPrices);
+  refreshedPrices.forEach(async (element) => {
+    await pricesData.storePrices(element, element.symbol);
+  });
+
   return res.send(refreshedPrices).status(200);
 });
 
