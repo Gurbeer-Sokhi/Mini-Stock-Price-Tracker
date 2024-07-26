@@ -2,19 +2,14 @@ import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Prices from "../components/PricesTable";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "../App.css";
 
 const navigation = [
   { name: "Tann Mann Stock viewer", href: "#", current: true },
-  ,
 ];
 
 function classNames(...classes) {
@@ -23,19 +18,30 @@ function classNames(...classes) {
 
 export default function Home() {
   const [data, setData] = useState(0);
-  const getData = async () => {
-    let response = axios
-      .get("http://localhost:5000/prices")
-      .then((d) => setData(d));
-    return response.data;
+  const [stock, setStock] = useState(0);
+
+  const getData = () => {
+    axios.get("http://localhost:5000/prices").then((d) => setData(d.data));
   };
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       getData();
-    }, 60000);
+    }, 5000);
     return () => clearInterval(intervalId);
-  });
+  }, []);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleOptionSelect = (option) => {
+    setData(data);
+    setStock(option);
+    setIsOpen(false);
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -95,7 +101,36 @@ export default function Home() {
           </div>
         </DisclosurePanel>
       </Disclosure>
-      <div className="py-10">{data ? <Prices prop={data} /> : ""}</div>
+      {/* <BasicSelect /> */}
+      <div className="dropdown">
+        <button onClick={toggleDropdown}>{"Select an option"}</button>
+        {isOpen && (
+          <ul className="dropdown-menu">
+            {/* Map over your options and render list items */}
+            {data !== 0 ? (
+              data?.map((option) => (
+                <li>
+                  <button
+                    className="font-bold bg-white font-red-50"
+                    // key={option.name}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleOptionSelect(option);
+                    }}
+                  >
+                    {option.name}
+                  </button>
+                </li>
+              ))
+            ) : (
+              <h1>Loading</h1>
+            )}
+          </ul>
+        )}
+      </div>
+      <div className="py-10">
+        <Prices prop={data && { data, stock }} />
+      </div>
     </>
   );
 }
